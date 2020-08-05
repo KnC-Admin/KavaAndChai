@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="SelectiveProductWidget">
+        <div class="modal-dialog">
+            <div class="popup" style="width:900px;height:600px">
+                <p class="title">
+                    Product Components
+                </p>
+                <div class="content-container ">
+                    <t t-if="widget.options.product">
+                        <div class="base_product"  t-att-data-product-id="widget.options.product.id"  t-att-data-count="widget.options.product.item_limit"/>
+                    </t>
+                    <div style="height: 338px;overflow: scroll;text-align: left;">
+                        <t t-if="widget.options.product_pack_list">
+
+                            <t t-foreach="widget.options.product_pack_list" t-as="product_pack_list_group">
+                                <div class="pack-groups" style="vertical-align: middle;">
+                                    <div class="pack-groups-title" style="display: inline-flex;padding: 10px 65px;width: 55px;"><t t-esc="product_pack_list_group.name"/></div>
+                                    <div class="pack-groups-products" style="display: inline-flex;">
+                                       <t t-foreach="product_pack_list_group.sel_products" t-as="product_pack_list">
+                                            <span t-attf-class="product wv_product #{product_pack_list.select_product ? 'dark-border' : ''}" t-att-data-product-id="product_pack_list.id" t-att-data-product-extra="product_pack_list.extra" t-att-data-product-qty="product_pack_list.qty">
+                                                <div class="product-img">
+                                                    <img t-attf-src='/web/image/product.product/#{product_pack_list.product_id[0]}/image' />
+
+
+                                                    <t t-if="product_pack_list.extra>0">
+                                                        <span class="price-tag">
+                                                            &#43;<t t-esc="product_pack_list.extra"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+
+
+                                                <div class="product-name">
+                                                    <t t-esc="product_pack_list.product_id[1]"/>
+                                                </div>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                        </t>
+                    </div>
+                    <div style="height: 137px;overflow: scroll;">
+                        <t t-if="widget.options.fixed_product_list">
+                            <t t-foreach="widget.options.fixed_product_list" t-as="fixed_product_list">
+                                <span class='product' t-att-data-product-id="fixed_product_list.id" t-att-data-product-qty="fixed_product_list.qty">
+                                    <div class="product-img">
+                                        <img t-attf-src='/web/image/product.product/#{fixed_product_list.product_id[0]}/image' />
+                                    </div>
+                                    <div class="product-name">
+                                        <t t-esc="fixed_product_list.product_id[1]"/>
+                                    </div>
+                                </span>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="button add_modifiers">
+                        Add
+                    </div>
+                    <div class="button cancel">
+                        Cancel 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    <t t-extend="Product">
+        <t t-jquery="t[t-if='product.to_weight']" t-operation='after'>
+            <t t-if="product.is_pack">
+                <t t-if='widget.pos.config.allow_product_pack'>
+                    <span class="price-tag" style="top: 21px;background: green;">
+                       Pack Product
+                    </span>
+                </t>
+            </t>
+        </t>
+    </t>
+    <t t-extend="Orderline">
+        <t t-jquery=".info-list" t-operation='after'>
+            <ul class="info-list">
+                <t t-if="line.fix_product_ids">
+                    <li><em>Fixed Component</em></li>
+                    <t t-foreach="line.fix_product_ids" t-as="fixed_product">
+                        <li class="info" style="margin-left: 22px;"><t t-raw="line.fixed_product_pack(fixed_product,line.quantity,line.get_unit().name)"/></li>
+                    </t>
+                </t>
+                <t t-if="line.selective_product_ids">
+                    <li><em>Modifier Component</em></li>
+                    <t t-foreach="line.selective_product_ids" t-as="selective_product">
+                        <li class="info" style="margin-left: 22px;"><t t-raw="line.selected_product_pack(selective_product,line.quantity,line.get_unit().name)"/></li>
+                    </t>
+                </t>
+            </ul>
+        </t>
+    </t>
+    <t t-name="OrderlineEditPackButton">
+        <div class='control-button'>
+            <i class='fa fa-tag' /> Modifiers
+        </div>
+    </t>
+    <t t-extend="PosTicket">
+        <t t-jquery="t[t-if='orderline.get_discount() > 0']" t-operation='after'>
+            <t t-if="orderline.fix_product_ids">
+                <li><b>Fixed Component</b></li>
+                <t t-foreach="orderline.fix_product_ids" t-as="fixed_product">
+                    <li class="info"><t t-raw="orderline.fixed_product_pack(fixed_product,orderline.quantity,orderline.get_unit().name)"/></li>
+                </t>
+            </t>
+            <t t-if="orderline.selective_product_ids">
+                <li><b>Modifier Component</b></li>
+                <t t-foreach="orderline.selective_product_ids" t-as="selective_product">
+                    <li class="info"><t t-raw="orderline.selected_product_pack(selective_product,orderline.quantity,orderline.get_unit().name)"/></li>
+                </t>
+            </t>
+        </t>
+    </t>
+</templates>
