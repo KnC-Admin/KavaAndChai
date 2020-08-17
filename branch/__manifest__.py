@@ -24,7 +24,7 @@ operating-Unit Operation for POS,operating-Unit Operation for Sales,operating-Un
     'website': 'http://www.Codisoft.com',
     'depends': ['base','sale_management',
                 'purchase','stock','account_voucher',
-                'account_invoicing', 'point_of_sale',
+                'account', 'point_of_sale',
                 'account_reports','account_accountant'],
     'data': ['views/branch_view.xml',
             'views/pos_view.xml',
